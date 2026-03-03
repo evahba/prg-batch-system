@@ -53,7 +53,7 @@ services:
       context: ./web
       dockerfile: Dockerfile
       args:
-        VITE_API_URL: ${VITE_API_URL:-http://192.168.88.54:3333}
+        VITE_API_URL: ${VITE_API_URL:-http://192.168.254.20:3333}
     container_name: prg-web
     restart: unless-stopped
     ports:
