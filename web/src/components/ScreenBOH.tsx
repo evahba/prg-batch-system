@@ -330,7 +330,7 @@ export function ScreenBOH({ socketState }: Props) {
           </div>
         </section>
 
-        <section className="flex-1 flex flex-col overflow-hidden">
+        <section className="w-48 shrink-0 flex flex-col overflow-hidden">
           <h2 className="text-sm font-semibold px-3 py-2 border-b border-border shrink-0 uppercase tracking-wide text-muted-foreground">Waiting</h2>
           <div className="flex-1 overflow-auto p-2 flex flex-col gap-2">
             {waiting.length === 0 ? (
