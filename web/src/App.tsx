@@ -10,7 +10,7 @@ function App() {
   const socketState = useSocket(screen)
 
   return (
-    <div className="min-h-screen flex flex-col bg-background text-foreground">
+    <div className="flex flex-col bg-background text-foreground" style={{ height: '100%', minHeight: '-webkit-fill-available' }}>
       <HiddenNav current={screen} onSelect={setScreen} />
 
       <main className="flex-1 overflow-hidden flex flex-col pt-8">

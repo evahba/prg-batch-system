@@ -73,7 +73,7 @@ function WaitingCard({
   return (
     <Card className={ticket.priority ? 'border-2 border-red-500 bg-red-50' : ''}>
       <CardContent className="px-3 py-2 flex items-center gap-2">
-        <Button size="sm" className="h-8 gap-1 shrink-0" onClick={() => onStart(ticket.id)}><ArrowLeft size={12} />Start</Button>
+        <Button size="icon" className="h-8 w-8 shrink-0" onClick={() => onStart(ticket.id)} title="Start"><ArrowLeft size={14} /></Button>
         {ticket.priority && (
           <span className="animate-pulse bg-red-600 text-white text-xs font-bold px-2 py-0.5 rounded shrink-0">!</span>
         )}
@@ -133,7 +133,7 @@ function BatchRow({
       "flex flex-col border-b border-border last:border-0"
     )}>
       <div className="flex items-center gap-2 py-2 px-3">
-        <span className="font-semibold text-sm shrink-0 w-16">B{ticket.batchSizeSnapshot}</span>
+        <span className="font-semibold text-sm shrink-0">B{ticket.batchSizeSnapshot}</span>
         <div className="flex-1 flex justify-center">
           {isQualityCheck ? (
             <span className="text-orange-600 font-semibold text-sm">QUALITY CHECK</span>
@@ -142,17 +142,10 @@ function BatchRow({
           )}
         </div>
         <div className="flex gap-1 shrink-0">
-          <Button variant="outline" size="sm" className="h-8 gap-1 px-2" onClick={() => onReset(ticket.id)}><RotateCcw size={12} />Reset</Button>
-          <Button variant={isQualityCheck ? "default" : "outline"} size="sm" className="h-8 gap-1 px-2" onClick={() => onComplete(ticket.id)}><CheckCircle size={12} />Done</Button>
-          <Button
-            variant="outline"
-            size="sm"
-            className="h-8 gap-1 px-2"
-            disabled={!isQualityCheck}
-            onClick={() => onExtend(ticket.id)}
-          >
-            {isQualityCheck ? <Clock size={12} /> : <Lock size={12} />}
-            +10s
+          <Button variant="outline" size="icon" className="h-8 w-8" onClick={() => onReset(ticket.id)} title="Reset"><RotateCcw size={14} /></Button>
+          <Button variant={isQualityCheck ? "default" : "outline"} size="icon" className="h-8 w-8" onClick={() => onComplete(ticket.id)} title="Complete"><CheckCircle size={14} /></Button>
+          <Button variant="outline" size="icon" className="h-8 w-8" disabled={!isQualityCheck} onClick={() => onExtend(ticket.id)} title="+10s">
+            {isQualityCheck ? <Clock size={14} /> : <Lock size={14} />}
           </Button>
         </div>
       </div>
@@ -192,29 +185,14 @@ function ItemCard({
   playedSoundRef: React.MutableRefObject<Set<number>>
   color?: string | null
 }) {
-  const firstTicket = tickets[0]
-  const responseTime = (() => {
-    if (!firstTicket?.createdAt || !firstTicket?.startedAt) return null
-    const ms = firstTicket.startedAt - firstTicket.createdAt
-    const sec = Math.max(0, Math.floor(ms / 1000))
-    const mins = Math.floor(sec / 60)
-    const secs = sec % 60
-    return `${mins} MIN ${secs} SEC`
-  })()
-
   return (
     <Card>
-      <CardHeader className="pb-2 pt-3 px-3">
-        <div className="flex items-center justify-between gap-2">
-          <div className="flex items-center gap-2 min-w-0">
-            <div className={`font-bold text-xs px-2 py-0.5 rounded shrink-0 ${colorClass(color)}`}>
-              {code}
-            </div>
-            <h3 className="font-semibold text-base uppercase tracking-wide truncate">{title}</h3>
+      <CardHeader className="pb-1 pt-2 px-3">
+        <div className="flex items-center gap-2 min-w-0">
+          <div className={`font-bold text-xs px-2 py-0.5 rounded shrink-0 ${colorClass(color)}`}>
+            {code}
           </div>
-          {responseTime && (
-            <span className="text-xs text-muted-foreground shrink-0">Resp: {responseTime}</span>
-          )}
+          <h3 className="font-semibold text-sm uppercase tracking-wide truncate">{title}</h3>
         </div>
       </CardHeader>
       <CardContent className="p-0 overflow-hidden">
