@@ -124,7 +124,7 @@ function BatchRow({
       return
     }
     playAlarmBeep()
-    const interval = setInterval(playAlarmBeep, 4000)
+    const interval = setInterval(playAlarmBeep, 1500)
     return () => clearInterval(interval)
   }, [isQualityCheck, ticket.id, playedSoundRef])
 
