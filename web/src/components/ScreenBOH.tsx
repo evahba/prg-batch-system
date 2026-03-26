@@ -12,20 +12,25 @@ import type { ScreenId } from '@/types/screen'
 import { cn } from '@/lib/utils'
 
 
-/** Simple beep via Web Audio */
-function playQualityCheckSound() {
+/** Play an urgent alarm beep sequence via Web Audio */
+function playAlarmBeep() {
   try {
     const ctx = new (window.AudioContext || (window as unknown as { webkitAudioContext: typeof AudioContext }).webkitAudioContext)()
-    const osc = ctx.createOscillator()
-    const gain = ctx.createGain()
-    osc.connect(gain)
-    gain.connect(ctx.destination)
-    osc.frequency.value = 880
-    osc.type = 'sine'
-    gain.gain.setValueAtTime(0.3, ctx.currentTime)
-    gain.gain.exponentialRampToValueAtTime(0.01, ctx.currentTime + 0.3)
-    osc.start(ctx.currentTime)
-    osc.stop(ctx.currentTime + 0.3)
+    const playTone = (startTime: number, freq: number, duration: number) => {
+      const osc = ctx.createOscillator()
+      const gain = ctx.createGain()
+      osc.connect(gain)
+      gain.connect(ctx.destination)
+      osc.frequency.value = freq
+      osc.type = 'square'
+      gain.gain.setValueAtTime(0.4, startTime)
+      gain.gain.exponentialRampToValueAtTime(0.01, startTime + duration)
+      osc.start(startTime)
+      osc.stop(startTime + duration)
+    }
+    playTone(ctx.currentTime, 1047, 0.15)
+    playTone(ctx.currentTime + 0.18, 1319, 0.15)
+    playTone(ctx.currentTime + 0.36, 1047, 0.15)
   } catch {
     // Ignore audio errors
   }
@@ -114,10 +119,13 @@ function BatchRow({
   const isQualityCheck = remaining !== null && remaining <= 0
 
   useEffect(() => {
-    if (isQualityCheck && !playedSoundRef.current.has(ticket.id)) {
-      playedSoundRef.current.add(ticket.id)
-      playQualityCheckSound()
+    if (!isQualityCheck) {
+      playedSoundRef.current.delete(ticket.id)
+      return
     }
+    playAlarmBeep()
+    const interval = setInterval(playAlarmBeep, 4000)
+    return () => clearInterval(interval)
   }, [isQualityCheck, ticket.id, playedSoundRef])
 
   const formatTime = (seconds: number) => {
