@@ -31,6 +31,8 @@
     "tailwindcss-animate": "^1.0.7"
   },
   "devDependencies": {
+    "@csstools/postcss-cascade-layers": "^6.0.0",
+    "@csstools/postcss-color-mix-function": "^4.0.2",
     "@csstools/postcss-oklab-function": "^5.0.2",
     "@eslint/js": "^9.39.1",
     "@tailwindcss/vite": "^4.1.18",
