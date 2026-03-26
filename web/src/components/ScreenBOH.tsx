@@ -11,14 +11,6 @@ import { useMenu } from '@/hooks/useMenu'
 import type { ScreenId } from '@/types/screen'
 import { cn } from '@/lib/utils'
 
-const TITLE_BY_SCREEN: Record<ScreenId, string> = {
-  1: '',
-  2: '',
-  3: 'Stir fry',
-  4: 'Fryer',
-  5: 'Sides + Grill',
-  menu: '',
-}
 
 /** Simple beep via Web Audio */
 function playQualityCheckSound() {
@@ -80,30 +72,24 @@ function WaitingCard({
 
   return (
     <Card className={ticket.priority ? 'border-2 border-red-500 bg-red-50' : ''}>
-      <CardContent className="px-4 py-3 flex flex-col gap-1">
-        <div className="flex items-center justify-between gap-2">
-          <div className="flex items-center gap-2 min-w-0">
-            {ticket.priority && (
-              <span className="animate-pulse bg-red-600 text-white text-xs font-bold px-2 py-1 rounded shrink-0">Waiting</span>
-            )}
-            <span className="font-semibold text-sm shrink-0">Batch {ticket.batchSizeSnapshot}</span>
-            <span className="font-medium truncate">{title}</span>
-          </div>
-          {code && (
-            <span className={`font-bold text-sm px-3 py-1 rounded shrink-0 ${colorClass(color)}`}>{code}</span>
-          )}
-        </div>
-        <div className="flex items-center justify-between gap-2">
-          <Button size="sm" className="gap-1" onClick={() => onStart(ticket.id)}><ArrowLeft size={13} />Start</Button>
-          <span className={cn(
-            "text-sm font-medium",
-            waitingMins === null || waitingMins < 4 ? "text-foreground" :
-            waitingMins < 5 ? "text-orange-500" :
-            "text-red-500"
-          )}>
-            {waitingMins !== null ? `Waiting ${waitingMins} min` : 'Waiting'}
-          </span>
-        </div>
+      <CardContent className="px-3 py-2 flex items-center gap-2">
+        <Button size="sm" className="h-8 gap-1 shrink-0" onClick={() => onStart(ticket.id)}><ArrowLeft size={12} />Start</Button>
+        {ticket.priority && (
+          <span className="animate-pulse bg-red-600 text-white text-xs font-bold px-2 py-0.5 rounded shrink-0">!</span>
+        )}
+        <span className="font-semibold text-sm shrink-0">Batch {ticket.batchSizeSnapshot}</span>
+        <span className="font-medium truncate flex-1">{title}</span>
+        {code && (
+          <span className={`font-bold text-xs px-2 py-0.5 rounded shrink-0 ${colorClass(color)}`}>{code}</span>
+        )}
+        <span className={cn(
+          "text-xs font-medium shrink-0",
+          waitingMins === null || waitingMins < 4 ? "text-muted-foreground" :
+          waitingMins < 5 ? "text-orange-500" :
+          "text-red-500"
+        )}>
+          {waitingMins !== null ? `${waitingMins}m` : ''}
+        </span>
       </CardContent>
     </Card>
   )
@@ -146,41 +132,41 @@ function BatchRow({
     <div className={cn(
       "flex flex-col border-b border-border last:border-0"
     )}>
-      <div className="grid grid-cols-3 items-center py-3 px-4">
-        <span className="font-semibold text-sm">BATCH {ticket.batchSizeSnapshot}</span>
-        <div className="flex justify-center">
+      <div className="flex items-center gap-2 py-2 px-3">
+        <span className="font-semibold text-sm shrink-0 w-16">B{ticket.batchSizeSnapshot}</span>
+        <div className="flex-1 flex justify-center">
           {isQualityCheck ? (
             <span className="text-orange-600 font-semibold text-sm">QUALITY CHECK</span>
           ) : (
-            <span className="text-foreground font-bold text-base tabular-nums">{formatTime(remaining ?? 0)}</span>
+            <span className="text-foreground font-bold text-sm tabular-nums">{formatTime(remaining ?? 0)}</span>
           )}
         </div>
-        <div />
+        <div className="flex gap-1 shrink-0">
+          <Button variant="outline" size="sm" className="h-8 gap-1 px-2" onClick={() => onReset(ticket.id)}><RotateCcw size={12} />Reset</Button>
+          <Button variant={isQualityCheck ? "default" : "outline"} size="sm" className="h-8 gap-1 px-2" onClick={() => onComplete(ticket.id)}><CheckCircle size={12} />Done</Button>
+          <Button
+            variant="outline"
+            size="sm"
+            className="h-8 gap-1 px-2"
+            disabled={!isQualityCheck}
+            onClick={() => onExtend(ticket.id)}
+          >
+            {isQualityCheck ? <Clock size={12} /> : <Lock size={12} />}
+            +10s
+          </Button>
+        </div>
       </div>
       {totalSeconds > 0 && (
-        <div className="px-4">
+        <div className="px-3 pb-2">
           <ProgressBar
             value={isQualityCheck ? totalSeconds : totalSeconds - (remaining ?? 0)}
             max={totalSeconds}
             invert
             complete={isQualityCheck}
-            className="h-2.5"
+            className="h-2"
           />
         </div>
       )}
-      <div className="flex gap-2 px-4 py-3">
-        <Button variant="outline" className="flex-1 h-10 gap-1" onClick={() => onReset(ticket.id)}><RotateCcw size={13} />Reset</Button>
-        <Button variant={isQualityCheck ? "default" : "outline"} className="flex-1 h-10 gap-1" onClick={() => onComplete(ticket.id)}><CheckCircle size={13} />Complete</Button>
-        <Button
-          variant="outline"
-          className="flex-1 h-10 gap-1"
-          disabled={!isQualityCheck}
-          onClick={() => onExtend(ticket.id)}
-        >
-          {isQualityCheck ? <Clock size={13} /> : <Lock size={13} />}
-          +10s
-        </Button>
-      </div>
     </div>
   )
 }
@@ -218,16 +204,16 @@ function ItemCard({
 
   return (
     <Card>
-      <CardHeader className="pb-3">
-        <div className="flex items-center justify-between gap-3">
-          <div className="flex items-center gap-3 min-w-0">
-            <div className={`font-bold text-sm px-3 py-1 rounded shrink-0 ${colorClass(color)}`}>
+      <CardHeader className="pb-2 pt-3 px-3">
+        <div className="flex items-center justify-between gap-2">
+          <div className="flex items-center gap-2 min-w-0">
+            <div className={`font-bold text-xs px-2 py-0.5 rounded shrink-0 ${colorClass(color)}`}>
               {code}
             </div>
-            <h3 className="font-semibold text-lg uppercase tracking-wide truncate">{title}</h3>
+            <h3 className="font-semibold text-base uppercase tracking-wide truncate">{title}</h3>
           </div>
           {responseTime && (
-            <span className="text-sm text-muted-foreground shrink-0">Response: {responseTime}</span>
+            <span className="text-xs text-muted-foreground shrink-0">Resp: {responseTime}</span>
           )}
         </div>
       </CardHeader>
@@ -253,7 +239,7 @@ type Props = {
   socketState: SocketState
 }
 
-export function ScreenBOH({ screen, socketState }: Props) {
+export function ScreenBOH({ socketState }: Props) {
   const { tickets, completedTickets, offsetMs, menuVersion } = socketState
   const { menu } = useMenu(menuVersion)
   const playedSoundRef = useRef<Set<number>>(new Set())
@@ -339,20 +325,14 @@ export function ScreenBOH({ screen, socketState }: Props) {
     return bQC - aQC
   })
 
-  const title = TITLE_BY_SCREEN[screen]
-
   return (
     <div className="flex-1 flex flex-col overflow-hidden">
-      {title && (
-        <h1 className="text-xl font-semibold px-4 pt-4">{title}</h1>
-      )}
-
       <div className="flex flex-1 overflow-hidden">
         <section className="flex-1 flex flex-col overflow-hidden border-r border-border">
-          <h2 className="text-lg font-semibold px-4 py-3 border-b border-border shrink-0">In progress</h2>
-          <div className="flex-1 overflow-auto p-4 flex flex-col gap-3">
+          <h2 className="text-sm font-semibold px-3 py-2 border-b border-border shrink-0 uppercase tracking-wide text-muted-foreground">In progress</h2>
+          <div className="flex-1 overflow-auto p-2 flex flex-col gap-2">
             {inProgressGroups.length === 0 ? (
-              <p className="text-muted-foreground text-sm">No timers running</p>
+              <p className="text-muted-foreground text-sm p-2">No timers running</p>
             ) : (
               inProgressGroups.map((group) => (
                 <ItemCard
@@ -373,10 +353,10 @@ export function ScreenBOH({ screen, socketState }: Props) {
         </section>
 
         <section className="flex-1 flex flex-col overflow-hidden">
-          <h2 className="text-lg font-semibold px-4 py-3 border-b border-border shrink-0">Waiting</h2>
-          <div className="flex-1 overflow-auto p-4 flex flex-col gap-3">
+          <h2 className="text-sm font-semibold px-3 py-2 border-b border-border shrink-0 uppercase tracking-wide text-muted-foreground">Waiting</h2>
+          <div className="flex-1 overflow-auto p-2 flex flex-col gap-2">
             {waiting.length === 0 ? (
-              <p className="text-muted-foreground text-sm">No tickets waiting</p>
+              <p className="text-muted-foreground text-sm p-2">No tickets waiting</p>
             ) : (
               waiting.map((ticket) => {
                 const { code, title } = parseItemSnapshot(ticket.itemTitleSnapshot ?? '')
@@ -397,7 +377,7 @@ export function ScreenBOH({ screen, socketState }: Props) {
         </section>
       </div>
 
-      <section className="border-t border-border shrink-0 px-4 py-3">
+      <section className="border-t border-border shrink-0 px-3 py-2">
         <Collapsable
           title="Completed"
           count={completedTickets.length}
