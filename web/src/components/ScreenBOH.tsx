@@ -73,7 +73,7 @@ function WaitingCard({
   return (
     <Card className={ticket.priority ? 'border-2 border-red-500 bg-red-50' : ''}>
       <CardContent className="px-3 py-2 flex items-center gap-2">
-        <Button size="icon" className="h-8 w-8 shrink-0" onClick={() => onStart(ticket.id)} title="Start"><ArrowLeft size={14} /></Button>
+        <Button size="sm" className="h-8 gap-1 shrink-0 px-2" onClick={() => onStart(ticket.id)}><ArrowLeft size={12} />Start</Button>
         {ticket.priority && (
           <span className="animate-pulse bg-red-600 text-white text-xs font-bold px-2 py-0.5 rounded shrink-0">!</span>
         )}
@@ -142,10 +142,10 @@ function BatchRow({
           )}
         </div>
         <div className="flex gap-1 shrink-0">
-          <Button variant="outline" size="icon" className="h-8 w-8" onClick={() => onReset(ticket.id)} title="Reset"><RotateCcw size={14} /></Button>
-          <Button variant={isQualityCheck ? "default" : "outline"} size="icon" className="h-8 w-8" onClick={() => onComplete(ticket.id)} title="Complete"><CheckCircle size={14} /></Button>
-          <Button variant="outline" size="icon" className="h-8 w-8" disabled={!isQualityCheck} onClick={() => onExtend(ticket.id)} title="+10s">
-            {isQualityCheck ? <Clock size={14} /> : <Lock size={14} />}
+          <Button variant="outline" size="sm" className="h-8 gap-1 px-2" onClick={() => onReset(ticket.id)}><RotateCcw size={12} />Reset</Button>
+          <Button variant={isQualityCheck ? "default" : "outline"} size="sm" className="h-8 gap-1 px-2" onClick={() => onComplete(ticket.id)}><CheckCircle size={12} />Done</Button>
+          <Button variant="outline" size="sm" className="h-8 gap-1 px-2" disabled={!isQualityCheck} onClick={() => onExtend(ticket.id)}>
+            {isQualityCheck ? <Clock size={12} /> : <Lock size={12} />}+10s
           </Button>
         </div>
       </div>
