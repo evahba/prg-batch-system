@@ -192,7 +192,7 @@ export function ScreenDriveThru({ socketState }: Props) {
       disabledReason = 'Connecting…'
     } else if (activeForItem && activeTicket) {
       if (activeTicket.state === 'created') {
-        disabledReason = 'Waiting to start'
+        disabledReason = 'In queue'
       }
     }
     
@@ -227,7 +227,7 @@ export function ScreenDriveThru({ socketState }: Props) {
     let disabledReason: string | undefined
     if (isInitializing) disabledReason = 'Loading…'
     else if (!hasReceivedSnapshot) disabledReason = 'Connecting…'
-    else if (activeForItem && activeTicket?.state === 'created') disabledReason = 'Waiting to start'
+    else if (activeForItem && activeTicket?.state === 'created') disabledReason = 'In queue'
     return (
       <CallFoodItemWide
         item={item}

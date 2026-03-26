@@ -191,7 +191,7 @@ export function ScreenFOH({ socketState }: Props) {
       disabledReason = 'Connecting…'
     } else if (activeForItem && activeTicket) {
       if (activeTicket.state === 'created') {
-        disabledReason = 'Waiting to start'
+        disabledReason = 'In queue'
       }
     }
     
