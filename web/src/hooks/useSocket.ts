@@ -6,9 +6,9 @@ import type { ScreenId } from '@/types/screen'
 const ROOMS_BY_SCREEN: Record<ScreenId, string[]> = {
   1: ['foh'],
   2: ['drive_thru'],
-  3: ['stirfry'],
+  3: ['stirfry', 'grill'],
   4: ['fryer'],
-  5: ['sides', 'grill'],
+  5: ['sides'],
   menu: [],
 }
 
