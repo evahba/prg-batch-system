@@ -18,7 +18,7 @@ const SCREENS: { id: ScreenId; label: string }[] = [
   { id: 2, label: 'Drive-thru' },
   { id: 3, label: 'Stir fry+Grill' },
   { id: 4, label: 'Fryer' },
-  { id: 5, label: 'Sides' },
+  { id: 5, label: 'Sides+Grill' },
   { id: 'menu', label: 'Menu' },
 ]
 

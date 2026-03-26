@@ -8,7 +8,7 @@ const ROOMS_BY_SCREEN: Record<ScreenId, string[]> = {
   2: ['drive_thru'],
   3: ['stirfry', 'grill'],
   4: ['fryer'],
-  5: ['sides'],
+  5: ['sides', 'grill'],
   menu: [],
 }
 
