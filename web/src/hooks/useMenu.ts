@@ -61,11 +61,11 @@ export function groupMenuByDriveThruSections(items: MenuItem[]) {
   return {
     section1: {
       row1: ['M1', 'R1'].map((c) => byCode[c]).filter(Boolean),
-      row2: ['V1', 'C3', 'B5'].map((c) => byCode[c]).filter(Boolean),
+      row2: ['CB3', 'C3', 'V1'].map((c) => byCode[c]).filter(Boolean),
     },
     section2: {
-      row1: ['F4', 'B1', 'C4'].map((c) => byCode[c]).filter(Boolean),
-      row2: ['CB3', 'C2', 'CB1'].map((c) => byCode[c]).filter(Boolean),
+      row1: ['B5', 'C1', 'C2'].map((c) => byCode[c]).filter(Boolean),
+      row2: ['F4', 'B1', 'C4'].map((c) => byCode[c]).filter(Boolean),
     },
   }
 }
