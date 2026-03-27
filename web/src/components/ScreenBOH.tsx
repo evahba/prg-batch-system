@@ -268,7 +268,7 @@ type Props = {
   socketState: SocketState
 }
 
-export function ScreenBOH({ socketState }: Props) {
+export function ScreenBOH({ screen, socketState }: Props) {
   const { tickets, completedTickets, offsetMs, menuVersion } = socketState
   const { menu } = useMenu(menuVersion)
   const playedSoundRef = useRef<Set<number>>(new Set())
@@ -333,6 +333,9 @@ export function ScreenBOH({ socketState }: Props) {
     return Array.from(groups.values())
   }
 
+  const FRYER_LIMIT = 6
+  const isFryer = screen === 4
+
   const waiting = tickets
     .filter((t) => t.state === 'created')
     .sort((a, b) => {
@@ -340,7 +343,8 @@ export function ScreenBOH({ socketState }: Props) {
       if (priorityDiff !== 0) return priorityDiff
       return (a.createdAt ?? 0) - (b.createdAt ?? 0)
     })
-  const inProgress = tickets.filter((t) => t.state === 'started')
+  const allInProgress = tickets.filter((t) => t.state === 'started')
+  const inProgress = isFryer ? allInProgress.slice(0, FRYER_LIMIT) : allInProgress
   
   const isQualityCheckTicket = (t: SnapshotTicket) => {
     const duration = t.durationSeconds ?? t.durationSnapshot
@@ -360,6 +364,11 @@ export function ScreenBOH({ socketState }: Props) {
         <section className="flex-1 flex flex-col overflow-hidden border-r border-border">
           <h2 className="text-sm font-semibold px-3 py-2 border-b border-border shrink-0 uppercase tracking-wide text-muted-foreground">In progress</h2>
           <div className="flex-1 overflow-auto p-2 flex flex-col gap-2">
+            {isFryer && allInProgress.length > FRYER_LIMIT && (
+              <div className="text-xs font-semibold text-orange-600 bg-orange-50 border border-orange-200 rounded px-2 py-1 text-center">
+                {allInProgress.length - FRYER_LIMIT} more in progress (fryer limit: {FRYER_LIMIT})
+              </div>
+            )}
             {inProgressGroups.length === 0 ? (
               <p className="text-muted-foreground text-sm p-2">No timers running</p>
             ) : (
