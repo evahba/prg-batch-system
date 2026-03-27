@@ -118,6 +118,26 @@ Implementation uses the native `history.pushState` API — no router library nee
 
 ---
 
+## Drive Thru — Item Layout Rearranged
+
+Drive Thru screen (screen 2) item layout was updated to match the requested order.
+
+**Section 1:**
+- Row 1 (3 cards): Honey Sesame Chicken Breast (CB3), Kung Pao Chicken (C3), Super Greens (V1)
+- Row 2 (2 wide cards): Chow Mein (M1), Fried Rice (R1)
+
+**Section 2:**
+- Row 1 (3 cards): Beijing Beef (B5), Orange Chicken (C1), Mushroom Chicken (C2)
+- Row 2 (3 cards): Honey Walnut Shrimp (F4), Broccoli Beef (B1), Grilled Teriyaki Chicken (C4)
+
+Row order in Section 1 was also swapped (3-card row moved above wide row).
+
+**Files changed:**
+- `web/src/hooks/useMenu.ts` — `groupMenuByDriveThruSections()` updated with new item codes per row
+- `web/src/components/ScreenDriveThru.tsx` — Section 1 rows swapped (`row2` rendered first, `row1` second)
+
+---
+
 ## Navigation Hidden
 
 The `HiddenNav` component is commented out in `App.tsx`. Screens are now navigated via URL only. The component is preserved and can be re-enabled by uncommenting.
