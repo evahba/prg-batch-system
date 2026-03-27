@@ -184,7 +184,7 @@ function BatchRow({
       "flex flex-col border-b border-border last:border-0"
     )}>
       <div className="flex items-center gap-2 py-2 px-3">
-        <span className="font-semibold text-sm shrink-0">B{ticket.batchSizeSnapshot}</span>
+        <span className="font-semibold text-sm shrink-0">Batch {ticket.batchSizeSnapshot}</span>
         <div className="flex-1 flex justify-center">
           {isQualityCheck ? (
             <span className="text-orange-600 font-semibold text-sm">QUALITY CHECK</span>
