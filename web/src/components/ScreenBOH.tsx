@@ -12,10 +12,52 @@ import type { ScreenId } from '@/types/screen'
 import { cn } from '@/lib/utils'
 
 
+type WebkitWindow = Window & { webkitAudioContext?: typeof AudioContext }
+let _audioCtx: AudioContext | null = null
+
+function getAudioContext(): AudioContext | null {
+  try {
+    if (!_audioCtx) {
+      const AC = window.AudioContext || (window as unknown as WebkitWindow).webkitAudioContext
+      if (!AC) return null
+      _audioCtx = new AC()
+    }
+    if (_audioCtx.state === 'suspended') {
+      _audioCtx.resume()
+    }
+    return _audioCtx
+  } catch {
+    return null
+  }
+}
+
+function unlockAudio() {
+  const ctx = getAudioContext()
+  if (!ctx) return
+  const buf = ctx.createBuffer(1, 1, 22050)
+  const src = ctx.createBufferSource()
+  src.buffer = buf
+  src.connect(ctx.destination)
+  src.start(0)
+}
+
+if (typeof window !== 'undefined') {
+  const unlock = () => {
+    unlockAudio()
+    window.removeEventListener('touchstart', unlock, true)
+    window.removeEventListener('touchend', unlock, true)
+    window.removeEventListener('click', unlock, true)
+  }
+  window.addEventListener('touchstart', unlock, true)
+  window.addEventListener('touchend', unlock, true)
+  window.addEventListener('click', unlock, true)
+}
+
 /** Play an urgent alarm beep sequence via Web Audio */
 function playAlarmBeep() {
   try {
-    const ctx = new (window.AudioContext || (window as unknown as { webkitAudioContext: typeof AudioContext }).webkitAudioContext)()
+    const ctx = getAudioContext()
+    if (!ctx) return
     const playTone = (startTime: number, freq: number, duration: number) => {
       const osc = ctx.createOscillator()
       const gain = ctx.createGain()
@@ -28,9 +70,10 @@ function playAlarmBeep() {
       osc.start(startTime)
       osc.stop(startTime + duration)
     }
-    playTone(ctx.currentTime, 1047, 0.15)
-    playTone(ctx.currentTime + 0.18, 1319, 0.15)
-    playTone(ctx.currentTime + 0.36, 1047, 0.15)
+    const t = ctx.currentTime
+    playTone(t, 1047, 0.15)
+    playTone(t + 0.18, 1319, 0.15)
+    playTone(t + 0.36, 1047, 0.15)
   } catch {
     // Ignore audio errors
   }
