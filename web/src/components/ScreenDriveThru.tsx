@@ -278,8 +278,8 @@ export function ScreenDriveThru({ socketState }: Props) {
         </div>
       )}
       <DriveThruSection title="Section 1" rows={[
-        { items: section1.row1, cols: 2 },
         { items: section1.row2, cols: 3 },
+        { items: section1.row1, cols: 2 },
       ]} />
       <DriveThruSection title="Section 2" rows={[
         { items: section2.row1, cols: 3 },
