@@ -35,23 +35,28 @@ export function useMenu(menuVersion?: number) {
   return { menu: data, loading, error, refetch }
 }
 
-/** FOH sections per README: Section 1, 2, 3 (steam table) */
-const FOH_SECTION_1_CODES = ['C2', 'C3', 'B3', 'F4', 'M1', 'V1', 'R1', 'R2']
-const FOH_SECTION_3_CODES = ['C4', 'E1', 'E2', 'E3']
+export type FohRow = { code: string; span?: number }[]
 
 export function groupMenuByFohSections(items: MenuItem[]) {
   const enabled = items.filter((i) => i.enabled)
   const byCode = Object.fromEntries(enabled.map((i) => [i.code, i]))
-  const section1 = FOH_SECTION_1_CODES.map((c) => byCode[c]).filter(Boolean)
-  const section3 = FOH_SECTION_3_CODES.map((c) => byCode[c]).filter(Boolean)
-  const FOH_SECTION_2_ORDER = ['CB1', 'CB5', 'C1', 'B1', 'B5', 'CB3']
-  const knownCodes = new Set([...FOH_SECTION_1_CODES, ...FOH_SECTION_3_CODES])
-  const unordered = enabled.filter((i) => !knownCodes.has(i.code))
-  const byCode2 = Object.fromEntries(unordered.map((i) => [i.code, i]))
-  const ordered = FOH_SECTION_2_ORDER.map((c) => byCode2[c]).filter(Boolean)
-  const remaining = unordered.filter((i) => !FOH_SECTION_2_ORDER.includes(i.code))
-  const section2 = [...ordered, ...remaining]
-  return { section1, section2, section3 }
+  const get = (c: string) => byCode[c]
+
+  return {
+    section1: {
+      row1: ['C5', 'C3', 'B3', 'F4'].map((c) => get(c)).filter(Boolean),
+      row2: ['M1', 'V1', 'R1', 'R2'].map((c) => get(c)).filter(Boolean),
+    },
+    section2: {
+      row1: [
+        { code: 'B1', span: 1 },
+        { code: 'C1', span: 2 },
+        { code: 'CB5', span: 1 },
+      ].map(({ code, span }) => ({ item: get(code), span })).filter((e) => e.item) as { item: MenuItem; span: number }[],
+      row2: ['C2', 'CB3', 'CB1', 'B5'].map((c) => get(c)).filter(Boolean),
+    },
+    section3: ['C4', 'E1', 'E2', 'E3'].map((c) => get(c)).filter(Boolean),
+  }
 }
 
 /** Drive-thru: sections with explicit row groupings */

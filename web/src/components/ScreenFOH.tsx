@@ -172,6 +172,7 @@ export function ScreenFOH({ socketState }: Props) {
 
   const { section1, section2, section3 } = groupMenuByFohSections(menu.items)
 
+
   function CallFoodItemWithTimer({ item }: { item: MenuItem }) {
     const activeTicket = getActiveTicketForItem(myCalls, item)
     const lastCompletedTime = getLastCompletedTime(completedTickets, item)
@@ -213,17 +214,27 @@ export function ScreenFOH({ socketState }: Props) {
     )
   }
 
-  function Section({ title, items }: { title: string; items: typeof section1 }) {
+  function SimpleRow({ items }: { items: typeof section3 }) {
     if (items.length === 0) return null
     return (
-      <section>
-        <h2 className="text-lg font-semibold mb-2">{title}</h2>
-        <div className="grid grid-cols-4 gap-4">
-          {items.map((item) => (
-            <CallFoodItemWithTimer key={item.id} item={item} />
-          ))}
-        </div>
-      </section>
+      <div className="grid grid-cols-4 gap-4">
+        {items.map((item) => (
+          <CallFoodItemWithTimer key={item.id} item={item} />
+        ))}
+      </div>
+    )
+  }
+
+  function SpannedRow({ items }: { items: typeof section2.row1 }) {
+    if (items.length === 0) return null
+    return (
+      <div className="grid grid-cols-4 gap-4">
+        {items.map(({ item, span }) => (
+          <div key={item.id} style={{ gridColumn: `span ${span}` }}>
+            <CallFoodItemWithTimer item={item} />
+          </div>
+        ))}
+      </div>
     )
   }
 
@@ -234,9 +245,26 @@ export function ScreenFOH({ socketState }: Props) {
           {lastError}
         </div>
       )}
-      <Section title="Section 1" items={section1} />
-      <Section title="Section 2" items={section2} />
-      <Section title="Section 3" items={section3} />
+      <section>
+        <h2 className="text-lg font-semibold mb-2">Section 1</h2>
+        <div className="space-y-4">
+          <SimpleRow items={section1.row1} />
+          <SimpleRow items={section1.row2} />
+        </div>
+      </section>
+      <section>
+        <h2 className="text-lg font-semibold mb-2">Section 2</h2>
+        <div className="space-y-4">
+          <SpannedRow items={section2.row1} />
+          <SimpleRow items={section2.row2} />
+        </div>
+      </section>
+      {section3.length > 0 && (
+        <section>
+          <h2 className="text-lg font-semibold mb-2">Section 3</h2>
+          <SimpleRow items={section3} />
+        </section>
+      )}
       {myCalls.length > 0 && (
         <section>
           <h2 className="text-lg font-semibold mb-4">My calls</h2>
