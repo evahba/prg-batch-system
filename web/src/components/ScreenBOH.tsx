@@ -88,6 +88,15 @@ function parseItemSnapshot(snapshot: string): { code: string; title: string } {
   return { title: snapshot, code: '' }
 }
 
+function SourceBadge({ source }: { source?: string }) {
+  const isDT = source === 'drive_thru'
+  return (
+    <span className={`text-xs font-bold px-1.5 py-0.5 rounded shrink-0 ${isDT ? 'bg-blue-600 text-white' : 'bg-gray-200 text-gray-700'}`}>
+      {isDT ? 'DT' : 'FOH'}
+    </span>
+  )
+}
+
 function colorClass(color?: string | null) {
   if (color === 'blue') return 'bg-blue-500 text-white'
   if (color === 'red') return 'bg-red-500 text-white'
@@ -125,6 +134,7 @@ function WaitingCard({
         {ticket.priority && (
           <span className="animate-pulse bg-red-600 text-white text-xs font-bold px-2 py-0.5 rounded shrink-0">!</span>
         )}
+        <SourceBadge source={ticket.source} />
         <span className="font-semibold text-sm shrink-0">Batch {ticket.batchSizeSnapshot}</span>
         <span className="font-medium truncate flex-1">{title}</span>
         {code && (
@@ -184,6 +194,7 @@ function BatchRow({
       "flex flex-col border-b border-border last:border-0"
     )}>
       <div className="flex items-center gap-2 py-2 px-3">
+        <SourceBadge source={ticket.source} />
         <span className="font-semibold text-sm shrink-0">Batch {ticket.batchSizeSnapshot}</span>
         <div className="flex-1 flex justify-center">
           {isQualityCheck ? (
