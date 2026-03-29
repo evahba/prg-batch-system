@@ -2,14 +2,26 @@ import router from '@adonisjs/core/services/router'
 import HealthController from '#controllers/health_controller'
 import MenuItemsController from '#controllers/menu_items_controller'
 import TicketsController from '#controllers/tickets_controller'
-import app from '@adonisjs/core/services/app'
+import { createReadStream, existsSync, statSync } from 'node:fs'
+import { join } from 'node:path'
 
 router.get('/health', [HealthController, 'handle'])
 router.get('/api/health', [HealthController, 'handle'])
 
 router.get('/uploads/*', ({ request, response }) => {
-  const filePath = request.url().replace('/uploads/', '')
-  return response.download(app.makePath('public/uploads', filePath))
+  const rawUrl = request.url()
+  const filePath = rawUrl.replace(/^\/uploads\//, '')
+  const absPath = join(process.cwd(), 'public/uploads', filePath)
+  if (!existsSync(absPath)) {
+    return response.status(404).send('Not found')
+  }
+  const stat = statSync(absPath)
+  const ext = filePath.split('.').pop()?.toLowerCase() ?? ''
+  const mime: Record<string, string> = { png: 'image/png', jpg: 'image/jpeg', jpeg: 'image/jpeg', gif: 'image/gif', webp: 'image/webp' }
+  response.header('Content-Type', mime[ext] ?? 'application/octet-stream')
+  response.header('Content-Length', String(stat.size))
+  response.header('Cache-Control', 'public, max-age=86400')
+  return response.stream(createReadStream(absPath))
 })
 
 router.group(() => {
