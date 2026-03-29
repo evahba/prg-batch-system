@@ -205,11 +205,17 @@ export function CallFoodItem({
       
       <CardContent className="flex-1 pb-2 pt-0 space-y-2">
         {imageUrl ? (
-          <img 
-            src={imageUrl} 
-            alt={item.title} 
-            className={compact ? "w-full h-14 object-contain rounded" : "w-full aspect-[3/1] object-contain rounded"}
-          />
+          <button
+            onClick={() => setShowInfo(true)}
+            className="w-full focus:outline-none"
+            tabIndex={-1}
+          >
+            <img 
+              src={imageUrl} 
+              alt={item.title} 
+              className={compact ? "w-full h-14 object-contain rounded" : "w-full aspect-[3/1] object-contain rounded"}
+            />
+          </button>
         ) : (
           <ImagePlaceholder className={compact ? "h-14" : "aspect-[3/1]"} />
         )}
