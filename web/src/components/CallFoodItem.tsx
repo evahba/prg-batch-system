@@ -34,6 +34,7 @@ type Props = {
   totalSeconds?: number
   lastCalledAt?: Date | null
   isPriority?: boolean
+  compact?: boolean
 }
 
 export function CallFoodItem({ 
@@ -49,6 +50,7 @@ export function CallFoodItem({
   totalSeconds,
   lastCalledAt,
   isPriority: _isPriority = false,
+  compact = false,
 }: Props) {
   const recommendedBatch = getRecommendedBatch(
     item.recommendedBatch ?? {},
@@ -206,10 +208,10 @@ export function CallFoodItem({
           <img 
             src={imageUrl} 
             alt={item.title} 
-            className="w-full aspect-[3/1] object-contain rounded"
+            className={compact ? "w-full h-14 object-contain rounded" : "w-full aspect-[3/1] object-contain rounded"}
           />
         ) : (
-          <ImagePlaceholder className="aspect-[3/1]" />
+          <ImagePlaceholder className={compact ? "h-14" : "aspect-[3/1]"} />
         )}
         
         <div className="min-h-[56px] flex items-center justify-center">

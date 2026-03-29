@@ -173,7 +173,7 @@ export function ScreenFOH({ socketState }: Props) {
   const { section1, section2, section3 } = groupMenuByFohSections(menu.items)
 
 
-  function CallFoodItemWithTimer({ item }: { item: MenuItem }) {
+  function CallFoodItemWithTimer({ item, compact }: { item: MenuItem; compact?: boolean }) {
     const activeTicket = getActiveTicketForItem(myCalls, item)
     const lastCompletedTime = getLastCompletedTime(completedTickets, item)
     const remaining = useRemainingSeconds(
@@ -210,6 +210,7 @@ export function ScreenFOH({ socketState }: Props) {
         totalSeconds={activeTicket?.durationSeconds ?? activeTicket?.durationSnapshot}
         lastCalledAt={lastCompletedTime}
         isPriority={activeTicket?.priority ?? false}
+        compact={compact}
       />
     )
   }
@@ -231,7 +232,7 @@ export function ScreenFOH({ socketState }: Props) {
       <div className="grid grid-cols-4 gap-4">
         {items.map(({ item, span }) => (
           <div key={item.id} style={{ gridColumn: `span ${span}` }}>
-            <CallFoodItemWithTimer item={item} />
+            <CallFoodItemWithTimer item={item} compact={span > 1} />
           </div>
         ))}
       </div>
