@@ -1,5 +1,5 @@
 import { useRef, useEffect } from 'react'
-import { Lock, Clock, RotateCcw, CheckCircle, ArrowLeft } from 'lucide-react'
+import { Lock, Clock, RotateCcw, CheckCircle, ArrowLeft, Car } from 'lucide-react'
 import { Button } from '@/components/ui/button'
 import { Card, CardContent, CardHeader } from '@/components/ui/card'
 import { Collapsable } from '@/components/ui/collapsible'
@@ -91,7 +91,8 @@ function parseItemSnapshot(snapshot: string): { code: string; title: string } {
 function SourceBadge({ source }: { source?: string }) {
   const isDT = source === 'drive_thru'
   return (
-    <span className={`text-xs font-bold px-1.5 py-0.5 rounded shrink-0 ${isDT ? 'bg-blue-600 text-white' : 'bg-gray-200 text-gray-700'}`}>
+    <span className={`inline-flex items-center gap-0.5 text-xs font-bold px-1.5 py-0.5 rounded shrink-0 ${isDT ? 'bg-blue-600 text-white' : 'bg-gray-200 text-gray-700'}`}>
+      {isDT && <Car size={10} />}
       {isDT ? 'DT' : 'FOH'}
     </span>
   )
