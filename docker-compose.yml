@@ -57,7 +57,7 @@ services:
     container_name: prg-web
     restart: unless-stopped
     ports:
-      - "${WEB_PORT:-8080}:8080"
+      - "${WEB_PORT:-80}:80"
     depends_on:
       - api
 
