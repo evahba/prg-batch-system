@@ -147,3 +147,77 @@ The `HiddenNav` component is commented out in `App.tsx`. Screens are now navigat
   - `HiddenNav` import commented out
   - `<HiddenNav />` JSX commented out
   - `pt-8` top padding removed from `<main>` (was reserving space for nav bar)
+
+---
+
+## Source Badge on BOH — Drive Thru vs FOH
+
+Every BOH ticket row now shows a badge indicating whether the order came from **Drive Thru** or **FOH**.
+
+- Drive Thru: blue badge with car icon, label "DT"
+- FOH: grey badge, label "FOH"
+- Source is determined by `ticket.source === 'drive_thru'`
+
+**Files changed:**
+- `web/src/components/ScreenBOH.tsx` — `SourceBadge` component added, rendered in `BatchRow`
+
+---
+
+## New Menu Item — C13 Dynamite Sweet & Sour Chicken
+
+Added new fryer item to the menu.
+
+| Field | Value |
+|-------|-------|
+| Code | C13 |
+| Title | Dynamite Sweet & Sour Chicken |
+| Station | fryer |
+| Batch sizes | 1, 2, 3 |
+| Cook time | 5 min (300s) all batch sizes |
+| Hold time | 10 min (600s) |
+| Recommended batch | 1 (all dayparts) |
+
+Image `c13.png` committed to `api/public/uploads/` and copied into the Docker uploads volume on production.
+
+**Files changed:**
+- `api/database/seeders/01_menu_seeder.ts` — C13 entry added
+- `api/public/uploads/c13.png` — image file committed
+
+---
+
+## FOH (sc1) Layout Rearranged
+
+FOH screen switched from a flat 4-column grid to an explicit row-based layout with span support.
+
+**Section 1:**
+- Row 1: C13, C3, B3, F4
+- Row 2: M1, V1, R1, R2
+
+**Section 2:**
+- Row 1: B1, C1 (span-2), CB5
+- Row 2: C2, CB3, CB1, B5
+
+**Section 3:** unchanged (C4, E1, E2, E3)
+
+Added `compact` prop to `CallFoodItem` so the wide-span C1 uses a shorter image height instead of the default tall aspect ratio.
+
+**Files changed:**
+- `web/src/hooks/useMenu.ts` — `groupMenuByFohSections()` rewritten with row/span structure
+- `web/src/components/ScreenFOH.tsx` — `SimpleRow`, `SpannedRow` layout components added
+- `web/src/components/CallFoodItem.tsx` — `compact` prop support added
+
+---
+
+## Fix: c13.png 404 — Uploads Served via fs.createReadStream
+
+**Problem:** `response.download()` from AdonisJS was returning `File not found` even though the file existed at `/app/public/uploads/c13.png`. Root cause: `response.download()` from `@adonisjs/core` has a known bug in certain build/volume configurations where it cannot resolve the file path correctly despite `existsSync` returning true.
+
+**Fix:** Replaced the `/uploads/*` route handler to serve files directly using Node.js `fs.createReadStream()` instead of `response.download()`. The handler manually resolves the absolute path via `process.cwd()`, checks existence with `existsSync`, sets the correct `Content-Type` and `Content-Length` headers, and streams the file.
+
+**Files changed:**
+- `api/start/routes.ts`
+  - Removed `import app from '@adonisjs/core/services/app'`
+  - Added `import { createReadStream, existsSync, statSync } from 'node:fs'` and `import { join } from 'node:path'`
+  - `/uploads/*` handler now uses `response.stream(createReadStream(absPath))`
+
+**Deployment note:** The droplet's old `docker-compose` (v1.29.2) has a `ContainerConfig` KeyError bug with newer Docker versions. The API container was recreated manually using `docker run` with the exact same environment variables, volume mount (`prg-batch-system_uploads_data:/app/public/uploads`), and network (`prg-batch-system_default`) as the original compose-managed container.
