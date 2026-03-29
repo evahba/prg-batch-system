@@ -44,7 +44,7 @@ export function groupMenuByFohSections(items: MenuItem[]) {
 
   return {
     section1: {
-      row1: ['C5', 'C3', 'B3', 'F4'].map((c) => get(c)).filter(Boolean),
+      row1: ['C13', 'C3', 'B3', 'F4'].map((c) => get(c)).filter(Boolean),
       row2: ['M1', 'V1', 'R1', 'R2'].map((c) => get(c)).filter(Boolean),
     },
     section2: {
