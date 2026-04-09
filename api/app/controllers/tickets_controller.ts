@@ -128,13 +128,14 @@ export default class TicketsController {
     response.json(ticket.serialize())
   }
 
-  /** POST /api/tickets/:id/extend — add 10 seconds to timer */
-  async extend({ params, response }: HttpContext) {
+  /** POST /api/tickets/:id/extend — add seconds to timer (default 10) */
+  async extend({ params, request, response }: HttpContext) {
     const ticket = await Ticket.findOrFail(params.id)
     if (ticket.state !== 'started') {
       return response.badRequest({ error: 'Ticket is not started' })
     }
-    ticket.durationSeconds = (ticket.durationSeconds ?? ticket.durationSnapshot) + 10
+    const seconds = request.input('seconds', 10)
+    ticket.durationSeconds = (ticket.durationSeconds ?? ticket.durationSnapshot) + seconds
     await ticket.save()
     const startedAtMs = ticket.startedAt!.toMillis()
     const durationMs = ticket.durationSeconds * 1000

@@ -134,17 +134,22 @@ function BatchRow({
   onComplete,
   onReset,
   onExtend,
+  onStep2,
   playedSoundRef,
+  step2UsedRef,
 }: {
   ticket: SnapshotTicket
   offsetMs: number
   onComplete: (id: number) => void
   onReset: (id: number) => void
   onExtend: (id: number) => void
+  onStep2: (id: number) => void
   playedSoundRef: React.MutableRefObject<Set<number>>
+  step2UsedRef: React.MutableRefObject<Set<number>>
 }) {
   const remaining = useRemainingSeconds(ticket.startedAt, ticket.durationSeconds ?? ticket.durationSnapshot, offsetMs)
   const isQualityCheck = remaining !== null && remaining <= 0
+  const step2Used = step2UsedRef.current.has(ticket.id)
 
   useEffect(() => {
     if (isQualityCheck && !playedSoundRef.current.has(ticket.id)) {
@@ -189,7 +194,11 @@ function BatchRow({
       )}
       <div className="flex gap-2 px-4 py-3">
         <Button variant="outline" className="flex-1 h-10 gap-1" onClick={() => onReset(ticket.id)}><RotateCcw size={13} />Reset</Button>
-        <Button variant={isQualityCheck ? "default" : "outline"} className="flex-1 h-10 gap-1" onClick={() => onComplete(ticket.id)}><CheckCircle size={13} />Complete</Button>
+        {isQualityCheck && !step2Used ? (
+          <Button variant="default" className="flex-1 h-10 gap-1" onClick={() => onStep2(ticket.id)}><Clock size={13} />Step 2</Button>
+        ) : (
+          <Button variant={isQualityCheck ? "default" : "outline"} className="flex-1 h-10 gap-1" onClick={() => onComplete(ticket.id)}><CheckCircle size={13} />Complete</Button>
+        )}
         <Button
           variant="outline"
           className="flex-1 h-10 gap-1"
@@ -212,7 +221,9 @@ function ItemCard({
   onComplete,
   onReset,
   onExtend,
+  onStep2,
   playedSoundRef,
+  step2UsedRef,
   color,
 }: {
   code: string
@@ -222,7 +233,9 @@ function ItemCard({
   onComplete: (id: number) => void
   onReset: (id: number) => void
   onExtend: (id: number) => void
+  onStep2: (id: number) => void
   playedSoundRef: React.MutableRefObject<Set<number>>
+  step2UsedRef: React.MutableRefObject<Set<number>>
   color?: string | null
 }) {
   const firstTicket = tickets[0]
@@ -259,7 +272,9 @@ function ItemCard({
             onComplete={onComplete}
             onReset={onReset}
             onExtend={onExtend}
+            onStep2={onStep2}
             playedSoundRef={playedSoundRef}
+            step2UsedRef={step2UsedRef}
           />
         ))}
       </CardContent>
@@ -276,6 +291,7 @@ export function ScreenBOH({ screen, socketState }: Props) {
   const { tickets, completedTickets, offsetMs, menuVersion, snapshot } = socketState
   const { menu } = useMenu(menuVersion)
   const playedSoundRef = useRef<Set<number>>(new Set())
+  const step2UsedRef = useRef<Set<number>>(new Set())
   const knownTicketIdsRef = useRef<Set<number>>(new Set())
   const initializedRef = useRef(false)
 
@@ -326,6 +342,16 @@ export function ScreenBOH({ screen, socketState }: Props) {
       await extendTicket(id)
     } catch (e) {
       alert(e instanceof Error ? e.message : 'Failed to extend')
+    }
+  }
+
+  const handleStep2 = async (id: number) => {
+    try {
+      await extendTicket(id, 180)
+      step2UsedRef.current.add(id)
+      playedSoundRef.current.delete(id)
+    } catch (e) {
+      alert(e instanceof Error ? e.message : 'Failed to start step 2')
     }
   }
 
@@ -397,7 +423,9 @@ export function ScreenBOH({ screen, socketState }: Props) {
                   onComplete={handleComplete}
                   onReset={handleReset}
                   onExtend={handleExtend}
+                  onStep2={handleStep2}
                   playedSoundRef={playedSoundRef}
+                  step2UsedRef={step2UsedRef}
                   color={getItemColor(group.code)}
                 />
               ))

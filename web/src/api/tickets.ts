@@ -86,8 +86,12 @@ export async function resetTicket(id: number): Promise<Ticket> {
   return normalizeTicket(data)
 }
 
-export async function extendTicket(id: number): Promise<Ticket> {
-  const r = await fetch(`${API}/api/tickets/${id}/extend`, { method: 'POST' })
+export async function extendTicket(id: number, seconds = 10): Promise<Ticket> {
+  const r = await fetch(`${API}/api/tickets/${id}/extend`, {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({ seconds }),
+  })
   if (!r.ok) {
     const err = await r.json().catch(() => ({}))
     throw new Error(err.error || 'Failed to extend')
