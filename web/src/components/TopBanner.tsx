@@ -27,8 +27,11 @@ export function TopBanner() {
           <DialogHeader>
             <DialogTitle>Contact</DialogTitle>
           </DialogHeader>
-          <div className="text-sm text-muted-foreground">
-            Contacts coming soon.
+          <div className="flex flex-col gap-1 text-sm">
+            <span className="font-semibold text-foreground">Oleg Kuftyrev</span>
+            <span className="text-muted-foreground">oleg.kuftyrev@pandarg.com</span>
+            <span className="text-muted-foreground">714.249.5376</span>
+            <span className="text-muted-foreground">EID: 1565789</span>
           </div>
         </DialogContent>
       </Dialog>
