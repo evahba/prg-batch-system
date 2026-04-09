@@ -20,6 +20,25 @@ const TITLE_BY_SCREEN: Record<ScreenId, string> = {
   menu: '',
 }
 
+/** Simple beep for new incoming order */
+function playNewOrderSound() {
+  try {
+    const ctx = new (window.AudioContext || (window as unknown as { webkitAudioContext: typeof AudioContext }).webkitAudioContext)()
+    const osc = ctx.createOscillator()
+    const gain = ctx.createGain()
+    osc.connect(gain)
+    gain.connect(ctx.destination)
+    osc.frequency.value = 520
+    osc.type = 'sine'
+    gain.gain.setValueAtTime(0.3, ctx.currentTime)
+    gain.gain.exponentialRampToValueAtTime(0.01, ctx.currentTime + 0.2)
+    osc.start(ctx.currentTime)
+    osc.stop(ctx.currentTime + 0.2)
+  } catch {
+    // Ignore audio errors
+  }
+}
+
 /** Simple beep via Web Audio */
 function playQualityCheckSound() {
   try {
@@ -254,9 +273,23 @@ type Props = {
 }
 
 export function ScreenBOH({ screen, socketState }: Props) {
-  const { tickets, completedTickets, offsetMs, menuVersion } = socketState
+  const { tickets, completedTickets, offsetMs, menuVersion, snapshot } = socketState
   const { menu } = useMenu(menuVersion)
   const playedSoundRef = useRef<Set<number>>(new Set())
+  const knownTicketIdsRef = useRef<Set<number>>(new Set())
+  const initializedRef = useRef(false)
+
+  useEffect(() => {
+    if (!snapshot) return
+    if (!initializedRef.current) {
+      initializedRef.current = true
+      tickets.forEach((t) => knownTicketIdsRef.current.add(t.id))
+      return
+    }
+    const hasNew = tickets.some((t) => !knownTicketIdsRef.current.has(t.id))
+    if (hasNew) playNewOrderSound()
+    tickets.forEach((t) => knownTicketIdsRef.current.add(t.id))
+  }, [tickets, snapshot])
   
   const getItemColor = (code: string) => {
     if (!menu) return null
