@@ -99,23 +99,23 @@ function WaitingCard({
 
   return (
     <Card className={ticket.priority ? 'border-2 border-red-500 bg-red-50' : ''}>
-      <CardContent className="px-4 py-3 flex flex-col gap-1">
+      <CardContent className="px-3 py-2 short:px-2 short:py-1.5 flex flex-col gap-1">
         <div className="flex items-center justify-between gap-2">
           <div className="flex items-center gap-2 min-w-0">
             {ticket.priority && (
               <span className="animate-pulse bg-red-600 text-white text-xs font-bold px-2 py-1 rounded shrink-0">Waiting</span>
             )}
             <span className="font-semibold text-sm shrink-0">Batch {ticket.batchSizeSnapshot}</span>
-            <span className="font-medium truncate">{title}</span>
+            <span className="font-medium text-sm truncate">{title}</span>
           </div>
           {code && (
-            <span className={`font-bold text-sm px-3 py-1 rounded shrink-0 ${colorClass(color)}`}>{code}</span>
+            <span className={`font-bold text-sm px-2 py-0.5 rounded shrink-0 ${colorClass(color)}`}>{code}</span>
           )}
         </div>
         <div className="flex items-center justify-between gap-2">
-          <Button size="sm" className="gap-1" onClick={() => onStart(ticket.id)}><ArrowLeft size={13} />Start</Button>
+          <Button size="sm" className="gap-1 h-8 short:h-7 short:text-xs" onClick={() => onStart(ticket.id)}><ArrowLeft size={12} />Start</Button>
           <span className={cn(
-            "text-sm font-medium",
+            "text-sm short:text-xs font-medium",
             waitingMins === null || waitingMins < 4 ? "text-foreground" :
             waitingMins < 5 ? "text-orange-500" :
             "text-red-500"
@@ -170,42 +170,42 @@ function BatchRow({
     <div className={cn(
       "flex flex-col border-b border-border last:border-0"
     )}>
-      <div className="grid grid-cols-3 items-center py-3 px-4">
-        <span className="font-semibold text-sm">BATCH {ticket.batchSizeSnapshot}</span>
+      <div className="grid grid-cols-3 items-center py-2 short:py-1.5 px-3 short:px-2">
+        <span className="font-semibold text-xs short:text-xs">BATCH {ticket.batchSizeSnapshot}</span>
         <div className="flex justify-center">
           {isQualityCheck ? (
-            <span className="text-orange-600 font-semibold text-sm">QUALITY CHECK</span>
+            <span className="text-orange-600 font-semibold text-xs">QUALITY CHECK</span>
           ) : (
-            <span className="text-foreground font-bold text-base tabular-nums">{formatTime(remaining ?? 0)}</span>
+            <span className="text-foreground font-bold text-sm short:text-xs tabular-nums">{formatTime(remaining ?? 0)}</span>
           )}
         </div>
         <div />
       </div>
       {totalSeconds > 0 && (
-        <div className="px-4">
+        <div className="px-3 short:px-2">
           <ProgressBar
             value={isQualityCheck ? totalSeconds : totalSeconds - (remaining ?? 0)}
             max={totalSeconds}
             invert
             complete={isQualityCheck}
-            className="h-2.5"
+            className="h-2 short:h-1.5"
           />
         </div>
       )}
-      <div className="flex gap-2 px-4 py-3">
-        <Button variant="outline" className="flex-1 h-10 gap-1" onClick={() => onReset(ticket.id)}><RotateCcw size={13} />Reset</Button>
+      <div className="flex gap-1.5 px-3 short:px-2 py-2 short:py-1.5">
+        <Button variant="outline" className="flex-1 h-9 short:h-7 short:text-xs gap-1" onClick={() => onReset(ticket.id)}><RotateCcw size={12} />Reset</Button>
         {isQualityCheck && !step2Used ? (
-          <Button variant="default" className="flex-1 h-10 gap-1" onClick={() => onStep2(ticket.id)}><Clock size={13} />Step 2</Button>
+          <Button variant="default" className="flex-1 h-9 short:h-7 short:text-xs gap-1" onClick={() => onStep2(ticket.id)}><Clock size={12} />Step 2</Button>
         ) : (
-          <Button variant={isQualityCheck ? "default" : "outline"} className="flex-1 h-10 gap-1" onClick={() => onComplete(ticket.id)}><CheckCircle size={13} />Complete</Button>
+          <Button variant={isQualityCheck ? "default" : "outline"} className="flex-1 h-9 short:h-7 short:text-xs gap-1" onClick={() => onComplete(ticket.id)}><CheckCircle size={12} />Complete</Button>
         )}
         <Button
           variant="outline"
-          className="flex-1 h-10 gap-1"
+          className="flex-1 h-9 short:h-7 short:text-xs gap-1"
           disabled={!isQualityCheck}
           onClick={() => onExtend(ticket.id)}
         >
-          {isQualityCheck ? <Clock size={13} /> : <Lock size={13} />}
+          {isQualityCheck ? <Clock size={12} /> : <Lock size={12} />}
           +10s
         </Button>
       </div>
@@ -250,16 +250,16 @@ function ItemCard({
 
   return (
     <Card>
-      <CardHeader className="pb-3">
-        <div className="flex items-center justify-between gap-3">
-          <div className="flex items-center gap-3 min-w-0">
-            <div className={`font-bold text-sm px-3 py-1 rounded shrink-0 ${colorClass(color)}`}>
+      <CardHeader className="pb-2 short:pb-1 pt-3 short:pt-2 px-3 short:px-2">
+        <div className="flex items-center justify-between gap-2">
+          <div className="flex items-center gap-2 min-w-0">
+            <div className={`font-bold text-xs px-2 py-0.5 rounded shrink-0 ${colorClass(color)}`}>
               {code}
             </div>
-            <h3 className="font-semibold text-lg uppercase tracking-wide truncate">{title}</h3>
+            <h3 className="font-semibold text-base short:text-sm uppercase tracking-wide truncate">{title}</h3>
           </div>
           {responseTime && (
-            <span className="text-sm text-muted-foreground shrink-0">Response: {responseTime}</span>
+            <span className="text-xs text-muted-foreground shrink-0 short:hidden">Response: {responseTime}</span>
           )}
         </div>
       </CardHeader>
@@ -403,13 +403,13 @@ export function ScreenBOH({ screen, socketState }: Props) {
   return (
     <div className="flex-1 flex flex-col overflow-hidden">
       {title && (
-        <h1 className="text-xl font-semibold px-4 pt-4">{title}</h1>
+        <h1 className="text-lg short:text-base font-semibold px-4 short:px-3 pt-3 short:pt-2">{title}</h1>
       )}
 
       <div className="flex flex-1 overflow-hidden">
         <section className="flex-1 flex flex-col overflow-hidden border-r border-border">
-          <h2 className="text-lg font-semibold px-4 py-3 border-b border-border shrink-0">In progress</h2>
-          <div className="flex-1 overflow-auto p-4 flex flex-col gap-3">
+          <h2 className="text-base short:text-sm font-semibold px-4 short:px-3 py-2 short:py-1.5 border-b border-border shrink-0">In progress</h2>
+          <div className="flex-1 overflow-auto p-3 short:p-2 flex flex-col gap-2 short:gap-1.5">
             {inProgressGroups.length === 0 ? (
               <p className="text-muted-foreground text-sm">No timers running</p>
             ) : (
@@ -434,8 +434,8 @@ export function ScreenBOH({ screen, socketState }: Props) {
         </section>
 
         <section className="flex-1 flex flex-col overflow-hidden">
-          <h2 className="text-lg font-semibold px-4 py-3 border-b border-border shrink-0">Waiting</h2>
-          <div className="flex-1 overflow-auto p-4 flex flex-col gap-3">
+          <h2 className="text-base short:text-sm font-semibold px-4 short:px-3 py-2 short:py-1.5 border-b border-border shrink-0">Waiting</h2>
+          <div className="flex-1 overflow-auto p-3 short:p-2 flex flex-col gap-2 short:gap-1.5">
             {waiting.length === 0 ? (
               <p className="text-muted-foreground text-sm">No tickets waiting</p>
             ) : (

@@ -3,6 +3,7 @@
 @plugin "tailwindcss-animate";
 
 @custom-variant dark (&:is(.dark *));
+@custom-variant short (@media (max-height: 850px));
 
 :root {
   font-family: system-ui, Avenir, Helvetica, Arial, sans-serif;
